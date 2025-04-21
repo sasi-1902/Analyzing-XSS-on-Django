@@ -37,7 +37,4 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 cd ~/Webpen/django-blog\ app
 
 
-### Step 2: Activate Virtual Environment
-```bash
-source venv/bin/activate 
 
