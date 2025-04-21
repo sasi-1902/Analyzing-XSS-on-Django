@@ -8,7 +8,7 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 
 ---
 
-## ⚙️ Tools & Environment
+## Tools & Environment
 
 - **Operating System:** Kali Linux  
 - **Framework:** Django  
@@ -19,7 +19,7 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 
 ---
 
-## 🛠️ Features
+## Features
 
 - Simulated **Attacker-Victim** environment
 - **Stored XSS** attack with cookie-stealing payload
@@ -30,10 +30,14 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 
 ---
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### 📁 Step 1: Extract or Navigate to Project Directory
 ```bash
 cd ~/Webpen/django-blog\ app
 
+
+### Step 2: Activate Virtual Environment
+```bash
+source venv/bin/activate 
 
