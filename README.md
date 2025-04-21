@@ -37,27 +37,3 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 cd ~/Webpen/django-blog\ app
 
 
-/django-blog-app/
-│
-├── manage.py
-├── db.sqlite3
-├── requirements.txt
-├── Procfile
-├── LICENSE
-│
-├── blog/
-├── core/
-│   ├── views.py       # Includes search_posts logic
-│   ├── urls.py
-│
-├── users/
-│
-├── templates/
-│   ├── search.html          # Reflected XSS example
-│   ├── domsearch.html       # DOM-Based XSS page
-│   └── core/
-│       └── post.html        # Stored XSS (|safe usage)
-│
-└── static/
-
-
