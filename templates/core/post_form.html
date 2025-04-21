@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block head_title %}{% if update %}Update post{% else %}Create a post{% endif %}{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-8 offset-2">
+      <h2 class=" my-5">{% if update %}Update post{% else %}Create a post{% endif %}</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          {{ form.title.label_tag }}
+          <!-- VULNERABILITY: Unescaped title value using |safe filter -->
+          <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title"
+            name="title" value='{{ form.title.value|default:""|safe }}'>
+          {% if form.title.errors %}
+          <div class="invalid-feedback">{{ form.title.errors|safe }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.content.label_tag }}
+          <!-- VULNERABILITY: Content not properly sanitized -->
+          <textarea type="text" class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="id_content"
+            name="content" cols="40" rows="10">{{ form.content.value|default:""|safe }}</textarea>
+          {% if form.content.errors %}
+          <div class="invalid-feedback">{{ form.content.errors|safe }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.image.label_tag }}<br>
+          <input type="file" class="{% if form.image.errors %}is-invalid{% endif %}" id="id_image" name="image"
+            accept="image/*">
+          {% if form.image.errors %}
+          <div class="invalid-feedback">{{ form.image.errors|safe }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          {{ form.tags.label_tag }}<br>
+          <select class="custom-select w-25" name="tags" id="id_tags" multiple>
+            {% for name, value in form.tags.field.choices %}
+            <!-- VULNERABILITY: Unescaped option values -->
+            <option value="{{ name|safe }}">{{ value|safe }}</option>
+            {% endfor %}
+          </select>
+          {% if form.tags.errors %}
+          <div class="invalid-feedback">{{ form.tags.errors|safe }}</div>
+          {% endif %}
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">
+          {% if update %}Update the post{% else %}Create a post{% endif %}
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- VULNERABILITY: Added unsafe JavaScript handling form data -->
+<script>
+  document.getElementById('id_title').addEventListener('input', function() {
+    document.getElementById('title-preview').innerHTML = this.value;
+  });
+  
+  document.getElementById('id_content').addEventListener('input', function() {
+    document.getElementById('content-preview').innerHTML = this.value;
+  });
+</script>
+{% endblock content %}

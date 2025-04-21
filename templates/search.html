@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Search Blog Posts</h2>
+  <form method="get" action="{% url 'search' %}">
+    <input type="text" name="q" placeholder="Search..." value="{{ query }}">
+    <button type="submit">Search</button>
+  </form>
+
+  {% if query %}
+    <p>You searched for: {{ query|safe }}</p>  <!-- ⚠️ Realistic XSS vulnerability -->
+    <ul>
+      {% for post in posts %}
+        <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+      {% empty %}
+        <li>No posts found.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
+

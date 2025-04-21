@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>DOM-Based Search</h2>
+  <div id="dom-result"></div>
+
+  <script>
+    // Extract URL param 'q' and write directly into HTML
+    var urlParams = new URLSearchParams(window.location.search);
+    var query = urlParams.get('q') || '';
+    document.getElementById('dom-result').innerHTML = query;  // 🔥 VULNERABLE LINE
+  </script>
+{% endblock %}
