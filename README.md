@@ -37,4 +37,3 @@ This project explores how various Cross-Site Scripting (XSS) attacks can be perf
 cd ~/Webpen/django-blog\ app
 
 
-
