@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block head_title %}Guide{% endblock %}
+
+{% block content %}
+<div class="xss-crumb">Guide</div>
+<h1>Using this site</h1>
+<p class="xss-lede">
+  A short walkthrough of the Blog and the XSS Lab attached to it, from browsing a normal post to
+  reading an Auditor finding.
+</p>
+
+<h2>1. Explore the Blog</h2>
+<p>
+  Open the Blog home page and browse the three seeded posts. Open one of them and try its
+  comments and search &mdash; this is normal, safe-by-default behavior. The Blog is the
+  application the XSS Lab analyzes.
+</p>
+<p><a class="btn btn-primary" href="{% url 'core:home' %}">Open Blog &rarr;</a></p>
+
+<h2>2. Open the XSS Lab</h2>
+<p>
+  The XSS Lab contains controlled vulnerable and secure variants of real Blog features: the same
+  post, the same comments, and the same search, each rendered two different ways.
+</p>
+<p><a class="btn btn-primary" href="{% url 'xss_lab:index' %}">Open XSS Lab &rarr;</a></p>
+
+<h2>3. Stored XSS</h2>
+<p>
+  Open the vulnerable variant of the demo post and submit a comment. Name and Email can be any
+  harmless placeholder text; put <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> in Content.
+  The comment is saved as a real row in the Blog's Comment table. Reload the vulnerable page and
+  the script runs again for anyone who opens it. Open the secure variant of the same post: the
+  same stored comment is now displayed as plain text instead of executing.
+</p>
+<p>
+  <a class="btn btn-primary" href="{% url 'xss_lab:stored_vulnerable' %}">Open Stored XSS (vulnerable) &rarr;</a>
+  <a class="btn btn-secondary" href="{% url 'xss_lab:stored_secure' %}">Open Stored XSS (secure) &rarr;</a>
+</p>
+
+<h2>4. Reflected XSS</h2>
+<p>
+  On the vulnerable search variant, enter <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> and
+  observe the search term reflected straight back into the page as a running script. On the
+  secure search variant, repeat the same query and confirm it is shown as escaped text instead.
+</p>
+<p>
+  <a class="btn btn-primary" href="{% url 'xss_lab:reflected_vulnerable' %}">Open Reflected XSS (vulnerable) &rarr;</a>
+  <a class="btn btn-secondary" href="{% url 'xss_lab:reflected_secure' %}">Open Reflected XSS (secure) &rarr;</a>
+</p>
+
+<h2>5. DOM XSS</h2>
+<p>
+  On the vulnerable preview, type <code>&lt;img src=x onerror=alert(1)&gt;</code> and observe the
+  client-side preview execute it via <code>innerHTML</code>. On the secure preview, enter the
+  same value and confirm it appears as plain text via <code>textContent</code> instead.
+</p>
+<p>
+  <a class="btn btn-primary" href="{% url 'xss_lab:dom_vulnerable' %}">Open DOM XSS (vulnerable) &rarr;</a>
+  <a class="btn btn-secondary" href="{% url 'xss_lab:dom_secure' %}">Open DOM XSS (secure) &rarr;</a>
+</p>
+
+<h2>6. Auditor</h2>
+<p>
+  Open the Auditor and click "Scan project". Each row in the results reports a rule (the
+  detected unsafe pattern), a severity (its review priority), the file and line where the
+  pattern occurs, and a short snippet of the matching code. The Auditor performs static source
+  analysis only: it never runs the application, and every finding requires human review before
+  you treat it as a real vulnerability.
+</p>
+<p><a class="btn btn-primary" href="{% url 'xss_lab:auditor' %}">Open Auditor &rarr;</a></p>
+
+<h2>7. Finish</h2>
+<p>
+  You have seen the Blog behave safely by default, each vulnerability demonstrated and fixed on
+  real Blog data, and the Auditor find the same patterns in the project's source.
+</p>
+<p>
+  <a class="btn btn-primary" href="{% url 'core:home' %}">Blog &rarr;</a>
+  <a class="btn btn-secondary" href="{% url 'xss_lab:index' %}">XSS Lab &rarr;</a>
+  <a class="btn btn-secondary" href="{% url 'xss_lab:auditor' %}">Auditor &rarr;</a>
+</p>
+{% endblock %}

@@ -12,21 +12,19 @@
         
         <div class="form-group">
           {{ form.title.label_tag }}
-          <!-- VULNERABILITY: Unescaped title value using |safe filter -->
           <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title"
-            name="title" value='{{ form.title.value|default:""|safe }}'>
+            name="title" value='{{ form.title.value|default:"" }}'>
           {% if form.title.errors %}
-          <div class="invalid-feedback">{{ form.title.errors|safe }}</div>
+          <div class="invalid-feedback">{{ form.title.errors }}</div>
           {% endif %}
         </div>
 
         <div class="form-group">
           {{ form.content.label_tag }}
-          <!-- VULNERABILITY: Content not properly sanitized -->
           <textarea type="text" class="form-control {% if form.content.errors %}is-invalid{% endif %}" id="id_content"
-            name="content" cols="40" rows="10">{{ form.content.value|default:""|safe }}</textarea>
+            name="content" cols="40" rows="10">{{ form.content.value|default:"" }}</textarea>
           {% if form.content.errors %}
-          <div class="invalid-feedback">{{ form.content.errors|safe }}</div>
+          <div class="invalid-feedback">{{ form.content.errors }}</div>
           {% endif %}
         </div>
 
@@ -35,7 +33,7 @@
           <input type="file" class="{% if form.image.errors %}is-invalid{% endif %}" id="id_image" name="image"
             accept="image/*">
           {% if form.image.errors %}
-          <div class="invalid-feedback">{{ form.image.errors|safe }}</div>
+          <div class="invalid-feedback">{{ form.image.errors }}</div>
           {% endif %}
         </div>
 
@@ -43,12 +41,11 @@
           {{ form.tags.label_tag }}<br>
           <select class="custom-select w-25" name="tags" id="id_tags" multiple>
             {% for name, value in form.tags.field.choices %}
-            <!-- VULNERABILITY: Unescaped option values -->
-            <option value="{{ name|safe }}">{{ value|safe }}</option>
+            <option value="{{ name }}">{{ value }}</option>
             {% endfor %}
           </select>
           {% if form.tags.errors %}
-          <div class="invalid-feedback">{{ form.tags.errors|safe }}</div>
+          <div class="invalid-feedback">{{ form.tags.errors }}</div>
           {% endif %}
         </div>
 
@@ -61,15 +58,4 @@
     </div>
   </div>
 </div>
-
-<!-- VULNERABILITY: Added unsafe JavaScript handling form data -->
-<script>
-  document.getElementById('id_title').addEventListener('input', function() {
-    document.getElementById('title-preview').innerHTML = this.value;
-  });
-  
-  document.getElementById('id_content').addEventListener('input', function() {
-    document.getElementById('content-preview').innerHTML = this.value;
-  });
-</script>
 {% endblock content %}

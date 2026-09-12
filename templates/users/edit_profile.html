@@ -20,8 +20,8 @@
 
         <div class="form-group">
           {{ form.about_me.label_tag }}
-          <textarea type="text" class="form-control {% if form.about_me.errors %}is-invalid{% endif %}" id="id_about_me"
-            name="about_me" value='{{ form.about_me.value }}' rows="5"></textarea>
+          <textarea class="form-control {% if form.about_me.errors %}is-invalid{% endif %}" id="id_about_me"
+            name="about_me" rows="5">{{ form.about_me.value|default:'' }}</textarea>
           {% if form.about_me.errors %}
           <div class="invalid-feedback">{{ form.about_me.errors }}</div>
           {% endif %}

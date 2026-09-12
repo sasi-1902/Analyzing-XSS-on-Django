@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block head_title %}XSS Lab{% endblock %}
+
+{% block content %}
+<h1>XSS Lab</h1>
+<p class="xss-lede">
+  This section demonstrates Stored, Reflected, and DOM-based Cross-Site Scripting using the
+  blog's own posts, comments, and search, each alongside its secure equivalent. The Auditor then
+  scans this project's source for the same kind of unsafe patterns automatically.
+</p>
+
+{% if not demo_post %}
+<div class="xss-note">
+  <p>Stored XSS needs the demo post first: run <code>python manage.py seed_demo</code>.</p>
+</div>
+{% endif %}
+
+<div class="table-scroll">
+<table class="xss-table">
+  <thead>
+    <tr>
+      <th>Vulnerability</th>
+      <th>Where</th>
+      <th>Demonstrations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Stored XSS</strong></td>
+      <td>Blog comments on a real post</td>
+      <td>
+        <a class="xss-link xss-link--vuln" href="{% url 'xss_lab:stored_vulnerable' %}">Vulnerable</a>
+        <a class="xss-link" href="{% url 'xss_lab:stored_secure' %}">Secure</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Reflected XSS</strong></td>
+      <td>Blog search</td>
+      <td>
+        <a class="xss-link xss-link--vuln" href="{% url 'xss_lab:reflected_vulnerable' %}">Vulnerable</a>
+        <a class="xss-link" href="{% url 'xss_lab:reflected_secure' %}">Secure</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>DOM-based XSS</strong></td>
+      <td>Client-side search preview</td>
+      <td>
+        <a class="xss-link xss-link--vuln" href="{% url 'xss_lab:dom_vulnerable' %}">Vulnerable</a>
+        <a class="xss-link" href="{% url 'xss_lab:dom_secure' %}">Secure</a>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>XSS Auditor</strong></td>
+      <td>This project's own source</td>
+      <td><a class="xss-link" href="{% url 'xss_lab:auditor' %}">Open</a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+{% endblock %}

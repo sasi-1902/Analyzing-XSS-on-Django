@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head_title %}Reflected XSS (vulnerable){% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; Reflected XSS</div>
+<h1>Reflected XSS <span class="badge-vuln">Vulnerable</span></h1>
+
+<div class="xss-note">
+  <p>
+    This is the blog's real search, but the query is rendered back with the unsafe template
+    filter, so a crafted link executes a script for anyone who opens it.
+  </p>
+  <dl>
+    <dt>Input / Source</dt><dd>The <code>q</code> query-string parameter (GET)</dd>
+    <dt>Unsafe sink</dt><dd><code>{% templatetag openvariable %} query|safe {% templatetag closevariable %}</code></dd><!-- xss-audit-ignore: illustrative label, not live code -->
+    <dt>Fix</dt><dd>Remove <code>|safe</code> and let Django autoescape the request data</dd>
+  </dl>
+  <p><a href="{% url 'xss_lab:reflected_secure' %}?q={{ query|urlencode }}">See the secure version of this search &rarr;</a></p>
+</div>
+
+<form method="get" class="form-group">
+  <input type="text" class="form-control" name="q" placeholder="Search posts&hellip;" value="{{ query }}">
+  <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+
+{% if query %}
+<p class="xss-demo-output">You searched for: {{ query|safe }}</p>
+<ul>
+  {% for post in posts %}
+  <li><a href="{% url 'core:post' post.id post.slug %}">{{ post.title }}</a></li>
+  {% empty %}
+  <li>No posts found.</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

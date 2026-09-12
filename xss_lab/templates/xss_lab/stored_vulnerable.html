@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Stored XSS (vulnerable){% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; Stored XSS</div>
+<h1>Stored XSS <span class="badge-vuln">Vulnerable</span></h1>
+
+<div class="xss-note">
+  <p>
+    This is a real blog post. Its comments are rendered with the unsafe template filter, so a
+    script posted here runs for every visitor who opens this page.
+  </p>
+  <dl>
+    <dt>Input / Source</dt><dd>The comment form's "content" field (POST)</dd>
+    <dt>Storage</dt><dd>A row in the blog's Comment table, attached to this post</dd>
+    <dt>Unsafe sink</dt><dd><code>{% templatetag openvariable %} comment.content|safe {% templatetag closevariable %}</code></dd><!-- xss-audit-ignore: illustrative label, not live code -->
+    <dt>Fix</dt><dd>Remove <code>|safe</code> and let Django's default autoescaping run</dd>
+  </dl>
+  <p><a href="{% url 'xss_lab:stored_secure' %}">See the secure version of this post &rarr;</a></p>
+</div>
+
+{% if not post %}
+<p>No demo post found. Run <code>python manage.py seed_demo</code> first.</p>
+{% else %}
+<article class="card">
+  {% if post.image %}
+  <img class="card-img-top" src="{{ post.image.url }}" alt="{{ post.title }}">
+  {% endif %}
+  <div class="card-body">
+    <h2 class="card-title">{{ post.title }}</h2>
+    <p class="text-muted">By {{ post.author.username }} &middot; {{ post.created_on|date:"N j, Y" }}</p>
+    <div class="card-text">{{ post.content|linebreaks }}</div>
+  </div>
+</article>
+
+<h3 class="mt-5">Comments</h3>
+<div class="row">
+  {% for comment in comments %}
+  <div class="col-12 mt-2">
+    <div class="card p-2">
+      <img class="rounded-circle mr-2" src="{% static 'img/avatar.svg' %}" alt="Avatar">
+      <!-- VULNERABLE: auto-escaping is disabled below, on purpose -->
+      <strong>{{ comment.name|safe }}</strong> said
+      <p class="m-1 mt-3">{{ comment.content|safe }}</p>
+      <p class="text-right text-muted"><small>{{ comment.created }}</small></p>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><p class="text-muted">No comments yet.</p></div>
+  {% endfor %}
+</div>
+
+<h3 class="mt-5">Leave a comment</h3>
+<p class="text-muted">
+  Name and Email can be any harmless placeholder text. Put the XSS payload, such as
+  <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>, in Content.
+</p>
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    {{ form.name.label_tag }}
+    <input type="text" class="form-control" id="id_name" name="name" value="{{ form.name.value|default:'' }}">
+  </div>
+  <div class="form-group">
+    {{ form.email.label_tag }}
+    <input type="text" class="form-control" id="id_email" name="email" value="{{ form.email.value|default:'' }}">
+  </div>
+  <div class="form-group">
+    {{ form.content.label_tag }}
+    <textarea class="form-control" id="id_content" name="content" rows="4">{{ form.content.value|default:'' }}</textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">Post comment</button>
+</form>
+{% endif %}
+{% endblock %}

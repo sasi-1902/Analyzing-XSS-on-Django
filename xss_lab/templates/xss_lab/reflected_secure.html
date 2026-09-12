@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block head_title %}Reflected XSS (secure){% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; Reflected XSS</div>
+<h1>Reflected XSS <span class="badge-secure">Secure</span></h1>
+
+<div class="xss-note xss-note--secure">
+  <p>
+    The same search and the same query as the vulnerable page, but rendered with Django's
+    default autoescaping, so the same input is shown as inert text.
+  </p>
+  <dl>
+    <dt>Input / Source</dt><dd>The <code>q</code> query-string parameter (GET)</dd>
+    <dt>Sink</dt><dd><code>{% templatetag openvariable %} query {% templatetag closevariable %}</code></dd>
+    <dt>Applied fix</dt><dd>The unsafe filter is not used on this page</dd>
+  </dl>
+  <p><a href="{% url 'xss_lab:reflected_vulnerable' %}?q={{ query|urlencode }}">See the vulnerable version of this search &rarr;</a></p>
+</div>
+
+<form method="get" class="form-group">
+  <input type="text" class="form-control" name="q" placeholder="Search posts&hellip;" value="{{ query }}">
+  <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+
+{% if query %}
+<p class="xss-demo-output">You searched for: {{ query }}</p>
+<ul>
+  {% for post in posts %}
+  <li><a href="{% url 'core:post' post.id post.slug %}">{{ post.title }}</a></li>
+  {% empty %}
+  <li>No posts found.</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
