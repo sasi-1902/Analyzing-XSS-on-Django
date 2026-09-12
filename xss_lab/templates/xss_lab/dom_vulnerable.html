@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block head_title %}DOM XSS (vulnerable){% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; DOM-based XSS</div>
+<h1>DOM-based XSS <span class="badge-vuln">Vulnerable</span></h1>
+
+<div class="xss-note">
+  <p>
+    A small search-preview widget, like the live suggestions under a real search box. It reads
+    the typed text (or the <code>q</code> URL parameter) in the browser and assigns it directly
+    to <code>.innerHTML</code>, so the browser parses it as markup. A plain
+    <code>&lt;script&gt;</code> tag will not fire here &mdash; browsers do not execute
+    <code>&lt;script&gt;</code> elements inserted via <code>.innerHTML</code> &mdash; but an
+    event-handler attribute such as <code>onerror</code> does.
+  </p>
+  <dl>
+    <dt>Input / Source</dt><dd>The preview box, or the <code>q</code> URL parameter</dd>
+    <dt>Unsafe sink</dt><dd><code>element.innerHTML = value;</code></dd><!-- xss-audit-ignore: illustrative label, not live code -->
+    <dt>Fix</dt><dd>Assign to <code>.textContent</code> instead of <code>.innerHTML</code></dd>
+  </dl>
+  <p><a href="{% url 'xss_lab:dom_secure' %}">See the secure version of this preview &rarr;</a></p>
+</div>
+
+<div class="search-preview">
+  <input type="text" id="preview-input" placeholder="Try &lt;img src=x onerror=alert(1)&gt;">
+  <div id="preview-result" class="search-preview__result"></div>
+</div>
+
+<script>
+  var input = document.getElementById('preview-input');
+  var result = document.getElementById('preview-result');
+  var params = new URLSearchParams(window.location.search);
+  input.value = params.get('q') || '';
+
+  function update() {
+    // VULNERABLE: user-controlled input assigned directly to innerHTML.
+    result.innerHTML = input.value;
+  }
+
+  input.addEventListener('input', update);
+  update();
+</script>
+{% endblock %}

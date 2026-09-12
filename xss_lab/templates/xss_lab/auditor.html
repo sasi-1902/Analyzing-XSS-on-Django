@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block head_title %}XSS Auditor{% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; Auditor</div>
+<h1>XSS Auditor</h1>
+<p class="xss-lede">
+  The Stored/Reflected/DOM demonstrations show one instance of each vulnerability by hand. The
+  Auditor is a static-analysis tool: it scans this project's source for the same kind of unsafe
+  patterns automatically &mdash; unsafe template escaping, Python's "mark safe" helper, and
+  unsafe DOM sinks in JavaScript. It never sends requests to the running application; it only
+  reads files. Same engine as <code>python manage.py xss_audit</code>.
+</p>
+
+<div class="auditor-toolbar">
+  <form method="get">
+    <button type="submit" class="btn btn-primary">Scan project</button>
+  </form>
+
+  <div class="auditor-stats">
+    <div class="auditor-stat">
+      <span class="auditor-stat__value">{{ total }}</span>
+      <span class="auditor-stat__label">Findings</span>
+    </div>
+    <div class="auditor-stat auditor-stat--high">
+      <span class="auditor-stat__value">{{ severity_counts.HIGH }}</span>
+      <span class="auditor-stat__label">High</span>
+    </div>
+    <div class="auditor-stat auditor-stat--medium">
+      <span class="auditor-stat__value">{{ severity_counts.MEDIUM }}</span>
+      <span class="auditor-stat__label">Medium</span>
+    </div>
+  </div>
+</div>
+
+<p class="auditor-note">
+  Static heuristic analysis &mdash; findings require human review. This is a
+  regex-based textual scan: it does not perform taint analysis, does not parse
+  JavaScript or HTML, and no finding proves the code is actually exploitable.
+  Scan root: <code>{{ scanned_root_label }}</code>
+</p>
+
+{% if findings %}
+<div class="table-scroll">
+<table class="findings-table">
+  <thead>
+    <tr>
+      <th>Severity</th>
+      <th>Rule</th>
+      <th>Location</th>
+      <th>Line</th>
+      <th>Finding</th>
+      <th>Code</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for finding in findings %}
+    <tr>
+      <td><span class="sev sev--{{ finding.severity|lower }}">{{ finding.severity }}</span></td>
+      <td><code>{{ finding.rule_id }}</code></td>
+      <td><code>{{ finding.path }}</code></td>
+      <td>{{ finding.line_no }}</td>
+      <td>{{ finding.message }}</td>
+      <td><code>{{ finding.snippet }}</code></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="findings-empty">No suspicious patterns found.</p>
+{% endif %}
+{% endblock %}

@@ -163,3 +163,64 @@ class EditProfileViewTest(TestCase):
         image.save(f, 'PNG')
 
         return f
+
+    def test_edit_profile_form_prepopulates_about_me(self):
+        # Regression: the about_me <textarea> used to set a bogus `value`
+        # HTML attribute instead of putting the text between the tags, so
+        # the field always rendered blank when editing.
+        self.client.login(email='user1@gmail.com', password='1234')
+        profile = self.user1.profile
+        profile.about_me = 'Existing bio text'
+        profile.save()
+
+        response = self.client.get(reverse('users:edit_profile'))
+        self.assertContains(response, 'Existing bio text')
+
+
+class LoginViewTest(TestCase):
+    def setUp(self):
+        User.objects.create_user(
+            username='user1', email='user1@gmail.com', password='1234'
+        )
+
+    def test_login_page_submit_button_says_log_in(self):
+        # Regression: the submit button used to read "Sign up" (the nav
+        # bar's separate "Sign up" link is expected and must stay).
+        response = self.client.get(reverse('users:login'))
+        self.assertContains(
+            response,
+            '<button type="submit" class="btn btn-primary">Log in</button>',
+            html=True,
+        )
+
+    def test_login_redirects_to_a_safe_local_next_url(self):
+        response = self.client.post(
+            f"{reverse('users:login')}?next=/users/edit-profile/",
+            {'email': 'user1@gmail.com', 'password': '1234'},
+        )
+        self.assertRedirects(response, '/users/edit-profile/')
+
+    def test_login_rejects_an_external_next_url(self):
+        # Regression: `next` used to be redirected to unvalidated, making
+        # this an open redirect.
+        response = self.client.post(
+            f"{reverse('users:login')}?next=https://evil.example/",
+            {'email': 'user1@gmail.com', 'password': '1234'},
+        )
+        self.assertRedirects(response, reverse('core:home'))
+
+    def test_login_rejects_a_protocol_relative_next_url(self):
+        # //evil.example is not an absolute URL but browsers treat it as
+        # one -- url_has_allowed_host_and_scheme must reject it too.
+        response = self.client.post(
+            f"{reverse('users:login')}?next=//evil.example/",
+            {'email': 'user1@gmail.com', 'password': '1234'},
+        )
+        self.assertRedirects(response, reverse('core:home'))
+
+    def test_login_falls_back_to_home_with_no_next_url(self):
+        response = self.client.post(
+            reverse('users:login'),
+            {'email': 'user1@gmail.com', 'password': '1234'},
+        )
+        self.assertRedirects(response, reverse('core:home'))

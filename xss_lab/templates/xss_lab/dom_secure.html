@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head_title %}DOM XSS (secure){% endblock %}
+
+{% block content %}
+<div class="xss-crumb">XSS Lab &middot; DOM-based XSS</div>
+<h1>DOM-based XSS <span class="badge-secure">Secure</span></h1>
+
+<div class="xss-note xss-note--secure">
+  <p>
+    The same search-preview widget as the vulnerable page, but assigned to
+    <code>.textContent</code> instead of <code>.innerHTML</code>, so the typed value is always
+    shown as plain text and never parsed as markup.
+  </p>
+  <dl>
+    <dt>Input / Source</dt><dd>The preview box, or the <code>q</code> URL parameter</dd>
+    <dt>Sink</dt><dd><code>element.textContent = value;</code></dd>
+    <dt>Applied fix</dt><dd><code>.innerHTML</code> is not used on this page</dd>
+  </dl>
+  <p><a href="{% url 'xss_lab:dom_vulnerable' %}">See the vulnerable version of this preview &rarr;</a></p>
+</div>
+
+<div class="search-preview">
+  <input type="text" id="preview-input" placeholder="Try &lt;img src=x onerror=alert(1)&gt;">
+  <div id="preview-result" class="search-preview__result"></div>
+</div>
+
+<script>
+  var input = document.getElementById('preview-input');
+  var result = document.getElementById('preview-result');
+  var params = new URLSearchParams(window.location.search);
+  input.value = params.get('q') || '';
+
+  function update() {
+    // SECURE: same user-controlled input, assigned to textContent so it
+    // is never interpreted as HTML/JavaScript by the browser.
+    result.textContent = input.value;
+  }
+
+  input.addEventListener('input', update);
+  update();
+</script>
+{% endblock %}

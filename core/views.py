@@ -1,7 +1,5 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -118,7 +116,16 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return self.model.objects.filter(author=self.request.user)
 
 
+def search_queryset(query):
+    """
+    The blog's real search logic, factored out so the XSS security layer's
+    reflected-XSS demonstration can reuse the exact same lookup instead of
+    duplicating it (see xss_lab/views.py).
+    """
+    return Post.objects.filter(title__icontains=query) if query else Post.objects.none()
+
+
 def search_posts(request):
     query = request.GET.get('q', '')
-    posts = Post.objects.filter(title__icontains=query) if query else Post.objects.none()
+    posts = search_queryset(query)
     return render(request, 'search.html', {'query': query, 'posts': posts})
