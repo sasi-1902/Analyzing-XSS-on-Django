@@ -224,12 +224,9 @@ Auditor to see the same patterns found in the project's source. The in-applicati
 
 **Sasi Deepika Eluri**
 
-GitHub: [https://github.com/sasi-1902](https://github.com/sasi-1902)
-
-LinkedIn: [https://www.linkedin.com/in/sasi-deepika-eluri/](https://www.linkedin.com/in/sasi-deepika-eluri/)
-
-Email: esasideepika@gmail.com
-
+- [GitHub](https://github.com/sasi-1902)
+- [LinkedIn](https://www.linkedin.com/in/sasi-deepika-eluri/)
+- [Email:]([esasideepika@gmail.com](mailto:esasideepika@gmail.com))
 ---
 
 ## License
