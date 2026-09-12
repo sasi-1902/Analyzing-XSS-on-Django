@@ -226,7 +226,7 @@ Auditor to see the same patterns found in the project's source. The in-applicati
 
 - [GitHub](https://github.com/sasi-1902)
 - [LinkedIn](https://www.linkedin.com/in/sasi-deepika-eluri/)
-- [Email:]([esasideepika@gmail.com](mailto:esasideepika@gmail.com))
+- Email:([esasideepika@gmail.com](mailto:esasideepika@gmail.com))
 ---
 
 ## License
